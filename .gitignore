@@ -1,0 +1,8 @@
+.env
+*.json
+!package.json
+__pycache__/
+*.pyc
+temp_uploaded_audio*
+*.docx
+venv/
