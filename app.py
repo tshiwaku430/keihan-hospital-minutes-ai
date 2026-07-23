@@ -1,4 +1,5 @@
 import os
+import base64
 import csv
 import io
 import json
@@ -64,11 +65,11 @@ DRIVE_SCOPES = ["https://www.googleapis.com/auth/drive"]
 
 
 def get_drive_service():
-    credentials_json = os.environ.get("GOOGLE_DRIVE_CREDENTIALS_JSON")
-    if credentials_json:
+    credentials_b64 = os.environ.get("GOOGLE_DRIVE_CREDENTIALS_JSON_B64")
+    if credentials_b64:
         # Streamlit Community Cloudなど、JSONキーファイルを配置できない環境向け
-        # （st.secretsに全文を貼り付ける形。ローカルではGOOGLE_DRIVE_CREDENTIALS_FILEを使う）
-        info = json.loads(credentials_json)
+        # （改行や記号を含む生JSONは貼り付け時に壊れやすいため、Base64化した1行の文字列をst.secretsに保存する）
+        info = json.loads(base64.b64decode(credentials_b64).decode("utf-8"))
         creds = service_account.Credentials.from_service_account_info(info, scopes=DRIVE_SCOPES)
     else:
         creds = service_account.Credentials.from_service_account_file(
